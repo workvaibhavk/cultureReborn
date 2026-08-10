@@ -10,13 +10,11 @@ const [password, setPassword] = useState("")
 const [loading, setLoading] = useState(false)
 const [data, setData] = useState({})
 
-
-
 useEffect(()=>{
    console.log(email, name, password) 
 })
 
-const handleSubmit = async (e)=> {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>)=> {
   e.preventDefault();
   setLoading(true)
   try{
@@ -41,7 +39,7 @@ setData(data)
 
   }
   catch(error){
-    throw new Error(error.message)
+   // throw new Error(error.message)
   }
   finally{
     setLoading(false)
