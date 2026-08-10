@@ -5,7 +5,7 @@ import VanillaTilt from "vanilla-tilt";
 import { Bookmark } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { moviesSampleData as movies } from "@/lib/data";
 
 import { Chela_One } from "next/font/google";
@@ -85,7 +85,7 @@ export default function Page() {
     );
   };
 
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [isStart, setIsStart] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
@@ -134,7 +134,7 @@ export default function Page() {
                 <TiltCard>
                   <div
                     onClick={() => {
-                      navigate(`/movie/${movie.id}`);
+                      router.push(`/movie/${movie.id}`);
                     }}
                     className="w-[340px] h-[510px] rounded-xl overflow-hidden cursor-pointer relative"
                   >
