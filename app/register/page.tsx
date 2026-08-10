@@ -50,7 +50,7 @@ return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-lg">
         <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">
-          Register
+          Register {JSON.stringify(data.request)}
         </h2>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
