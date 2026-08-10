@@ -52,7 +52,7 @@ return (
           Login
         </h2>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Email
@@ -81,7 +81,6 @@ return (
 
           <button
             type="submit"
-            onClick={(e)=> handleSubmit(e)}
             className="w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700"
           >
             Login
