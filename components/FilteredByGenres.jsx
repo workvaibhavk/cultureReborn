@@ -8,7 +8,7 @@ import "swiper/css/navigation";
 import VanillaTilt from "vanilla-tilt";
 import { Bookmark, ChevronLeft, ChevronRight } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import "swiper/css";
 import "swiper/css/navigation";
 import {moviesSampleData as movies} from '@/lib/data'
@@ -89,7 +89,7 @@ useEffect(()=> {
     );
   };
 
-  const navigate = useNavigate();
+  const router = useRouter();
   const swiperRef = useRef(null);
 
   const [isStart, setIsStart] = useState(true);
@@ -203,7 +203,7 @@ useEffect(()=> {
                 <TiltCard>
                   <div
                     onClick={() => {
-                      navigate(`/movie/${movie.id}`);
+                      router.push(`/movie/${movie.id}`);
                     }}
                     className="w-[170px] h-[255px] rounded-xl overflow-hidden cursor-pointer relative"
                   >
