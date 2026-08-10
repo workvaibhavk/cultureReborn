@@ -1,6 +1,7 @@
 import { Clock, MenuIcon, XIcon } from "lucide-react";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
+import Link from "next/link" 
 import "./Navbar.css";
 
 const Navbar = () => {
@@ -8,7 +9,7 @@ const Navbar = () => {
 
   return (
     <div className="text-white flex justify-between w-8/12 mx-auto my-6 items-center navbar">
-      <Link to="/" className="max-md:flex-1">
+      <Link href="/" className="max-md:flex-1">
         <h1 className=" text-5xl font-chela tracking-wide">Culture</h1>
       </Link>
 
@@ -24,7 +25,7 @@ const Navbar = () => {
             window.scrollTo(0, 0);
             setIsopen(false);
           }}
-          to="/"
+          href="/"
         >
           {" "}
           Home
@@ -34,7 +35,7 @@ const Navbar = () => {
             window.scrollTo(0, 0);
             setIsopen(false);
           }}
-          to="/movies"
+          href="/movies"
         >
           {" "}
           Movies
@@ -44,7 +45,7 @@ const Navbar = () => {
             window.scrollTo(0, 0);
             setIsopen(false);
           }}
-          to="/"
+          href="/"
         >
           {" "}
           Explore
@@ -54,14 +55,14 @@ const Navbar = () => {
             window.scrollTo(0, 0);
             setIsopen(false);
           }}
-          to="/transparency"
+          href="/transparency"
         >
           {" "}
           Transparency
         </Link>
       </div>
 
-      <Link className="loginbtn" to="/authenticate">Join</Link>
+      <Link className="loginbtn" href="/authenticate">Join</Link>
 
       {/* <MenuIcon className="menuIc" onClick={() => setIsopen(!isopen)} /> */}
     </div>
@@ -69,5 +70,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-/*   */
