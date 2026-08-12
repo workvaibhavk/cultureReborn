@@ -13,7 +13,8 @@ export default function Register() {
   const [dob, setDob] = useState("2009-07-02")
   const [role, setRole] = useState("user")
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState<{ request?: any }>({})
+  const [data, setData] = useState<any>({})
+  const [query, setQuery] = useState("")
 
   useEffect(() => {
     // console.log(email, name, password)
@@ -42,11 +43,15 @@ export default function Register() {
       if (!response.ok) {
         console.log("Error Submitting User Data", response)
       }
-      const data = await response.json()
-      console.log("data:", JSON.stringify(data.request))
-      setData(data.request)
-      console.log("data:", data.request)
-
+      const apiData = await response.json()
+      console.log("data by api:", JSON.stringify(apiData.request))
+      setData(apiData.request)
+      console.log("data by state:", data)
+      setQuery(`INSERT INTO users(first_name, last_name, email, pass_hash, dob, role)\n
+        \nVALUES ("${data.firstname}","${data.lastname}","${data.username}",\n
+        "${data.email}","${data.password}",\n
+        "${data.dob}","${data.role}");`)
+        console.log(query)
     }
     catch (error) {
       // throw new Error(error.message)
@@ -63,6 +68,17 @@ const generateUsername = () =>{
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       {loading && null}
+      {query != '' && <div className="shadow-lg bg-green-200 p-3 rounded-xl absolute max-w-74 left-10 top-12">
+        
+        {query}
+        <button
+            type="button"
+            onClick={()=> setQuery('')}
+            className="w-full rounded-lg bg-red-400 py-2 mt-6 shadow-xs font-semibold text-white transition hover:bg-blue-700"
+          >
+            Close
+          </button>
+          </div>} 
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-lg">
         <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">
           Register
@@ -95,7 +111,7 @@ const generateUsername = () =>{
             />
           </div>
  {(firstname && lastname) &&
-<button onClick={()=> generateUsername()} className="bg-green-200 py-2 px-4 mx-auto rounded-md">Generate username</button>
+<button type="button" onClick={()=> generateUsername()} className="bg-green-200 py-2 px-4 mx-auto rounded-md">Generate username</button>
 }
         <div className={`${username=="" ? "hidden" : ""}`}>
             <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -166,8 +182,8 @@ const generateUsername = () =>{
               Role
             </label>
             <span className="border-2 border-black py-[12px] bg-black rounded-xl">
-              <button type="button" onClick={()=> setRole("user")} className={`${role == "user" ? "" : ""}bg-blue-600 py-2 px-4 rounded-xl font-bold text-lg`}>User</button>
-              <button type="button" onClick={()=> setRole("admin")} className={`text-blue-600 bg-black py-2 px-4 rounded-xl font-bold text-lg`}>Admin</button>
+              <button type="button" onClick={()=> setRole("user")} className={`${role == "user" ? " bg-blue-600 " : "text-blue-600 bg-black"} py-2 px-4 rounded-xl font-bold text-lg`}>User</button>
+              <button type="button" onClick={()=> setRole("admin")} className={`${role != "user" ? " bg-blue-600 " : "text-blue-600 bg-black"} py-2 px-4 rounded-xl font-bold text-lg`}>Admin</button>
             </span>
           </div>
           <button
