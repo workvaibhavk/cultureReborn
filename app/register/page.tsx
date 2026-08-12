@@ -1,69 +1,112 @@
 "use client"
 
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 
-export default function Register(){
+export default function Register() {
 
-const [name, setName] = useState("")
-const [email, setEmail] = useState("")
-const [password, setPassword] = useState("")
-const [loading, setLoading] = useState(false)
-const [data, setData] = useState<{request?: any}>({})
+  const [firstname, setFirstname] = useState("")
+  const [lastname, setLastname] = useState("")
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [dob, setDob] = useState("2009-07-02")
+  const [role, setRole] = useState("user")
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState<{ request?: any }>({})
 
-useEffect(()=>{
-   console.log(email, name, password) 
-})
+  useEffect(() => {
+    // console.log(email, name, password)
+  })
 
-const handleSubmit = async (e: React.FormEvent<HTMLFormElement>)=> {
-  e.preventDefault();
-  setLoading(true)
-  try{
-    const response = await fetch(`/api/createUser`,{
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json' 
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password})
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true)
+    try {
+      const response = await fetch(`/api/createUser`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          firstname,
+          lastname,
+          username,
+          email,
+          password,
+          dob,
+          role
+        })
 
-    })
-    if (!response.ok){
-    console.log("Error Submitting User Data",response)
+      })
+      if (!response.ok) {
+        console.log("Error Submitting User Data", response)
+      }
+      const data = await response.json()
+      console.log("data:", JSON.stringify(data.request))
+      setData(data.request)
+      console.log("data:", data.request)
+
     }
-    const data = await response.json()
-        console.log("data:", data)
-setData(data)
-        console.log("data:", data)
+    catch (error) {
+      // throw new Error(error.message)
+    }
+    finally {
+      setLoading(false)
+    }
+  }
 
-  }
-  catch(error){
-   // throw new Error(error.message)
-  }
-  finally{
-    setLoading(false)
-  }
+const generateUsername = () =>{
+  setUsername(firstname+lastname+"@"+Math.ceil(Math.random()*1000))
 }
 
-return (
+  return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      {loading && null}
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-lg">
         <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">
-          Register {JSON.stringify(data.request)}
+          Register
+           {/* {JSON.stringify(data.request)} */}
         </h2>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
-              Name
+              First Name
             </label>
             <input
-              type="name"
-              placeholder="Enter your name"
+              type="text"
+              placeholder="Enter your First Name"
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-              onChange={(e)=> setName(e.target.value)}
-              value={name}
+              onChange={(e) => setFirstname(e.target.value)}
+              value={firstname}
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Last Name
+            </label>
+            <input
+              type="text"
+              placeholder="Enter your Last Name"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+              onChange={(e) => setLastname(e.target.value)}
+              value={lastname}
+            />
+          </div>
+ {(firstname && lastname) &&
+<button onClick={()=> generateUsername()} className="bg-green-200 py-2 px-4 mx-auto rounded-md">Generate username</button>
+}
+        <div className={`${username=="" ? "hidden" : ""}`}>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Username
+            </label>
+            <input
+              type="text"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+              onChange={(e) => setUsername(e.target.value)}
+              value={username}
+              readOnly
             />
           </div>
           <div>
@@ -74,7 +117,7 @@ return (
               type="email"
               placeholder="Enter your email"
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-              onChange={(e)=> setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               value={email}
             />
           </div>
@@ -87,12 +130,46 @@ return (
               type="password"
               placeholder="Enter your password"
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-              onChange={(e)=> setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               value={password}
             />
           </div>
 
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              placeholder="Re-enter your password"
+              className={`${confirmPassword != "" && (password == confirmPassword) ? "border-green-600" : "border-gray-300"} w-full rounded-lg border  px-4 py-2 focus:border-blue-500 focus:outline-none`}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={confirmPassword}
+           />
+           {confirmPassword != "" && (password == confirmPassword) && <span className="text-green-600 text-sm">password matched</span>}
+          </div>
 
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Date of Birth
+            </label>
+            <input
+              type="date"
+              placeholder="Re-enter your password"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+              onChange={(e) => setDob(e.target.value)}
+              value={dob}
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+              Role
+            </label>
+            <span className="border-2 border-black py-[12px] bg-black rounded-xl">
+              <button type="button" onClick={()=> setRole("user")} className={`${role == "user" ? "" : ""}bg-blue-600 py-2 px-4 rounded-xl font-bold text-lg`}>User</button>
+              <button type="button" onClick={()=> setRole("admin")} className={`text-blue-600 bg-black py-2 px-4 rounded-xl font-bold text-lg`}>Admin</button>
+            </span>
+          </div>
           <button
             type="submit"
             className="w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700"
@@ -104,7 +181,7 @@ return (
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{" "}
           <a href="/login" className="text-blue-600 hover:underline">
-Login          </a>
+            Login          </a>
         </p>
       </div>
     </div>

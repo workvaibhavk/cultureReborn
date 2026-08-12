@@ -147,7 +147,7 @@ useEffect(()=> {
 
   return (
     <div className="bg-none text-white w-full">
-      <h1 className="Title-txt opacity-50 p-50 text-[240px] justify-self-center tracking-[2px] font-[100]">
+     <h1 className="Title-txt opacity-50 p-50 text-7xl md:text-[240px] justify-self-center tracking-[2px] font-[100]">
         Genres
       </h1>
 
@@ -209,7 +209,7 @@ useEffect(()=> {
                   >
                     <img
                       src={movie.poster_url}
-                      onError={(e) => (e.target.src = "/image.jpg")}
+                      // onError={(e) => (e.target.src = "/image.jpg")}
                       alt={movie.title}
                       className="w-full h-full object-cover"
                     />

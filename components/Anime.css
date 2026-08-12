@@ -160,15 +160,14 @@ img {
 
 @media (max-width: 460px) {
   :root {
-   --slide-height: 58px;
-    --slide-width: 103px;
+   --slide-height: 116px;
+    --slide-width: 206px;
   }
 
   .slider {
     width: 460px;
   }
 }
-
 
 .overlay {
   position: absolute;
@@ -187,8 +186,7 @@ img {
 }
 
 .main-txt{
-        font-family: "Chela One", system-ui;
-    font-size: 70px;
+    font-family: "Chela One", system-ui;
     justify-self: center;
 }
 

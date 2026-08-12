@@ -23,7 +23,7 @@ const sliders = [
 const Anime = () => {
   return (
     <div className="anime-wrapper text-white">
-      <h1 className="main-txt"> For the Cinema, For you</h1>
+      <h1 className="main-txt text-[55px] leading-14 md:leading-normal md:text-[70px] "> For the Cinema, For you</h1>
       <section className="slider-container">
         {sliders.map((slider) => (
           <Slider

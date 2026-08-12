@@ -141,7 +141,7 @@ const Random = () => {
 
   return (
     <div className="bg-none text-white w-full">
-      <h1 className="Title-txt opacity-50 p-50 text-[240px] justify-self-center tracking-[2px] font-[100]">
+      <h1 className="Title-txt opacity-50 p-50 text-7xl md:text-[240px] justify-self-center tracking-[2px] font-[100]">
         Trending
       </h1>
 
@@ -181,7 +181,7 @@ const Random = () => {
           centeredSlidesBounds={true}
           modules={[Navigation]}
           breakpoints={{
-            400: { slidesPerView: 2 },
+            400: { slidesPerView: 3 },
             768: { slidesPerView: 3 },
             1024: { slidesPerView: 4 },
             1280: { slidesPerView: 6 },
@@ -192,7 +192,7 @@ const Random = () => {
           className="overflow-hidden mt-[-80px] px-6"
         >
           {movies.map((movie) => (
-            <SwiperSlide key={movie.id} className="flex-shrink-0 !w-auto">
+            <SwiperSlide key={movie.id} className="flex-shrink-0 !w-auto  ">
               <div className="flex flex-col items-center space-y-2 movie-tilt-wrapper relative w-[170px] h-[280px] overflow-visible rounded-2xl">
                 <TiltCard>
                   <div
@@ -203,7 +203,7 @@ const Random = () => {
                   >
                     <img
                       src={movie.poster_url}
-                      onError={(e) => (e.target.src = "/image.jpg")}
+                      // onError={(e) => (e.target.src = "/image.jpg")}
                       alt={movie.title}
                       className="w-full h-full object-cover"
                     />

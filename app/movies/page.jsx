@@ -140,7 +140,7 @@ export default function Page() {
                   >
                     <img
                       src={movie.poster_url}
-                      onError={(e) => (e.target.src = "/image.jpg")}
+                      // onError={(e) => (e.target.src = "/image.jpg")}
                       alt={movie.title}
                       className="w-full h-full object-cover"
                     />
