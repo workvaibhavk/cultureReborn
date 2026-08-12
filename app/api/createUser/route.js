@@ -12,5 +12,5 @@ export async function POST(req) {
     timestamp: new Date().toISOString(),
   };
 
-  return NextResponse.json(request);
+  return NextResponse.json({request});
 }
