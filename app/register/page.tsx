@@ -1,5 +1,6 @@
 "use client"
 
+import { redirect } from "next/navigation";
 import { useState, useEffect } from "react";
 
 export default function Register() {
@@ -15,6 +16,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<any>({})
   const [query, setQuery] = useState("")
+  const [error,setError] = useState("")
 
   useEffect(() => {
     // console.log(email, name, password)
@@ -22,6 +24,10 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+if (password !== confirmPassword){ setError("Passwords no not match!"); return;}
+if (!(username)) generateUsername();
+
     setLoading(true)
     try {
       const response = await fetch(`/api/createUser`, {
@@ -44,20 +50,21 @@ export default function Register() {
         console.log("Error Submitting User Data", response)
       }
       const apiData = await response.json()
-      console.log("data by api:", JSON.stringify(apiData.request))
-      setData(apiData.request)
+      console.log("hash:", apiData.hashedPassword)
+      const newData = apiData.request
+      console.log("data by api:", JSON.stringify(newData))
+      setData(newData)
       console.log("data by state:", data)
-      setQuery(`INSERT INTO users(first_name, last_name, email, pass_hash, dob, role)\n
-        \nVALUES ("${data.firstname}","${data.lastname}","${data.username}",\n
-        "${data.email}","${data.password}",\n
-        "${data.dob}","${data.role}");`)
-        console.log(query)
+      setQuery(apiData.query)
+      console.log(query)
+      console.log(apiData.rows)
     }
     catch (error) {
       // throw new Error(error.message)
     }
     finally {
       setLoading(false)
+      setTimeout(()=> redirect('/login'), 9000)
     }
   }
 
@@ -68,7 +75,8 @@ const generateUsername = () =>{
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
       {loading && null}
-      {query != '' && <div className="shadow-lg bg-green-200 p-3 rounded-xl absolute max-w-74 left-10 top-12">
+      
+      {(query != '' && data)&& <div className="shadow-lg bg-green-200 p-3 rounded-xl absolute max-w-74 left-10 top-12">
         
         {query}
         <button
@@ -85,7 +93,9 @@ const generateUsername = () =>{
            {/* {JSON.stringify(data.request)} */}
         </h2>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
+{error && <p className="bg-red-400 text-sm text-white py-2 px-3 font-bold rounded-md text-center mx-auto">{error}</p>}
+
+        <form className="space-y-4 mt-6" onSubmit={handleSubmit}>
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
               First Name
@@ -96,6 +106,7 @@ const generateUsername = () =>{
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               onChange={(e) => setFirstname(e.target.value)}
               value={firstname}
+              required
             />
           </div>
           <div>
@@ -108,6 +119,7 @@ const generateUsername = () =>{
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               onChange={(e) => setLastname(e.target.value)}
               value={lastname}
+              required
             />
           </div>
  {(firstname && lastname) &&
@@ -135,6 +147,7 @@ const generateUsername = () =>{
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               onChange={(e) => setEmail(e.target.value)}
               value={email}
+              required
             />
           </div>
 
@@ -148,6 +161,7 @@ const generateUsername = () =>{
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               onChange={(e) => setPassword(e.target.value)}
               value={password}
+              required
             />
           </div>
 
@@ -161,6 +175,7 @@ const generateUsername = () =>{
               className={`${confirmPassword != "" && (password == confirmPassword) ? "border-green-600" : "border-gray-300"} w-full rounded-lg border  px-4 py-2 focus:border-blue-500 focus:outline-none`}
               onChange={(e) => setConfirmPassword(e.target.value)}
               value={confirmPassword}
+              required
            />
            {confirmPassword != "" && (password == confirmPassword) && <span className="text-green-600 text-sm">password matched</span>}
           </div>
@@ -175,6 +190,7 @@ const generateUsername = () =>{
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
               onChange={(e) => setDob(e.target.value)}
               value={dob}
+              required
             />
           </div>
           <div>
