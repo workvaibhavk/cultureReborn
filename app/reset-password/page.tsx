@@ -1,36 +1,38 @@
 "use client"
 
+import useUser from "@/lib/useUser";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
-export default function Login() {
+export default function Page() {
 
   const router = useRouter();
 
-  const [emailUsername, setEmailUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const [userId, setUserId] = useState("")
+  const [prevPassword, setPrevPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmNewPassword, setConfirmNewPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<any>({})
   const [query, setQuery] = useState("")
   const [error, setError] = useState("")
   const [value, setValue] = useState("");
 
-  useEffect(() => {
-    const storedValue = localStorage.getItem("User");
-    if (storedValue) {
-      setValue(storedValue);
-    }
-  }, []);
+  const {userData, isLoaded} = useUser();
   
-  // const { user_id } = data.rows
+    if (!isLoaded) return <p> Loading ....</p>;
+    
+  if(isLoaded){
+  if(!userData) console.warn("failed to get user!")
+  }
+    console.log(userData, isLoaded)
 
-  const setUserSession = (user_id: string) => {
-    localStorage.setItem("User", user_id);
-    setValue(user_id);
-  };
+useEffect(()=>{
+      if(userData?.rows?.user_id){
+        setUserId(userData.rows.user_id || 0)
+      }
 
-  useEffect(() => {
-  },[])
+},[isLoaded, userData])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,14 +40,15 @@ export default function Login() {
 
     setLoading(true)
     try {
-      const response = await fetch(`/api/verify-user`, {
+      const response = await fetch(`/api/reset-user-password`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          emailUsername,
-          password,
+          userId,
+          prevPassword,
+          newPassword,
         })
 
       })
@@ -60,10 +63,9 @@ export default function Login() {
       console.log(query)
       setData(apiData)
       setError(apiData?.error)
-      setUserSession(apiData.rows.user_id)
-      if(apiData.rows.user_id) setTimeout(()=> router.push('/'), 5000)
     }
     catch (error) {
+      console.error(error)
       setError(data.error)
     }
     finally {
@@ -88,7 +90,7 @@ export default function Login() {
       </div>}
       <div className="w-full max-w-sm rounded-xl bg-white p-8 shadow-lg">
         <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">
-          Login
+          Reset Password
         </h2>
 
         {error && <p className="bg-red-400 text-sm text-white py-2 px-3 font-bold rounded-md text-center mx-auto">{error}</p>}
@@ -96,38 +98,54 @@ export default function Login() {
         <form className="space-y-4 mt-6" onSubmit={handleSubmit}>
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
-              Email or Username
+              Current Password
             </label>
 
             <input
-              type="text"
-              placeholder="Enter your email or username"
+              type="password"
+              placeholder="Enter your current password"
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-              onChange={(e) => setEmailUsername(e.target.value)}
-              value={emailUsername}
+              onChange={(e) => setPrevPassword(e.target.value)}
+              value={prevPassword}
               required
             />
           </div>
 
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">
-              Password
+             New Password
             </label>
             <input
               type="password"
-              placeholder="Enter your password"
+              placeholder="Enter your new password"
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
+              onChange={(e) => setNewPassword(e.target.value)}
+              value={newPassword}
               required
             />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">
+             Confirm New Password
+            </label>
+            <input
+              type="password"
+              placeholder="Re-enter your new password"
+              className={`${confirmNewPassword != "" && (newPassword == confirmNewPassword) ? "border-green-600" : "border-gray-300"} w-full rounded-lg border  px-4 py-2 focus:border-blue-500 focus:outline-none`}
+              onChange={(e) => setConfirmNewPassword(e.target.value)}
+              value={confirmNewPassword}
+              required
+            />
+            {confirmNewPassword != "" && (newPassword == confirmNewPassword) && <span className="text-green-600 text-sm">password matched</span>}
+
           </div>
 
           <button
             type="submit"
             className="w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700"
           >
-            Login
+            Reset Password
           </button>
         </form>
 

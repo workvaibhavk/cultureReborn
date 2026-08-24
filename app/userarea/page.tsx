@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { moviesSampleData as movies } from "@/lib/data";
 import { Chela_One } from "next/font/google";
 import useUser from "@/lib/useUser";
+import Link from "next/link";
 
 const chelaOne = Chela_One({
   subsets: ["latin"],
@@ -58,6 +59,11 @@ if(!userData) console.warn("failed to get user!")
     <div className={chelaOne.className}>
       <Navbar />
       <div className="bg-none text-white w-full">
+
+<Link href="/reset-password" className="bg-white rounded-md text-black py-2 px-3 text-xl cursor-pointer">
+    Reset Password
+</Link>
+
         <h1 className="Title-txt opacity-50 p-50 text-9xl justify-self-center tracking-[2px] font-[100]">
           Now Showing
         </h1>

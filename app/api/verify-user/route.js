@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import bcrypt from "bcrypt";
-import { db, mode } from "@/lib/db"
+import { db } from "@/lib/db"
 
 export async function POST(req) {
     const request = await req.json();
@@ -11,12 +11,14 @@ export async function POST(req) {
 
     const [[pass]] = await db.query("SELECT pass_hash FROM users WHERE (email = ? OR username = ?)",[request.emailUsername, request.emailUsername])
 
-    if(!(pass)) return NextResponse.json({
-        status: 500,
-        error: "Username or Email Invalid"
+    if(!pass) return NextResponse.json({
+        status: 401,
+        error: "Username or Email Invalid",
     })
 
-    if(!bcrypt.compare(request.password, pass.pass_hash)) return NextResponse.json({
+    const passMatched = await bcrypt.compare(request.password, pass.pass_hash)
+
+    if(!passMatched) return NextResponse.json({
         status: 500,
         error: "Password Doesn't Match"
     })
@@ -27,11 +29,8 @@ export async function POST(req) {
 
     const data = {
         status: 200,
-        request: request,
         query: query,
         rows: rows,
-        // hashBool: bcrypt.compare(request.password, user.pass_hash) ? "yess" : "no"
-        pass: pass
     };
 
     return NextResponse.json(data);

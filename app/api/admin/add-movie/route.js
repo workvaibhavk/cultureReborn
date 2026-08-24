@@ -1,16 +1,36 @@
 import { NextResponse } from 'next/server';
-import bcrypt from "bcrypt";
-import { db, mode } from "@/lib/db"
+import { db } from "@/lib/db"
 
 export async function POST(req) {
     const request = await req.json();
     console.log("Api:", request)
 
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(request.password, saltRounds)
-if (mode == "sql"){
-      const [rows] = await db.query("INSERT INTO users(first_name, last_name, username, email, pass_hash, dob, role) VALUES (?,?,?,?,?,?,?)",[request.firstname, request.lastname, request.username, request.email, hashedPassword, request.dob, request.role])
-}
+    if(!request.title || !request.director || !request.musician || !request.runtime || !request.releaseDate || !request.posterUrl || !request.cast || !request.selectedGenres || !request.ageRating || !request.streamUrl || !request.ottPlatform || !request.thumbnailUrl || !request.trailerId) return NextResponse.json(
+      {error: "Insufficient data fields"},
+      {status: 401},
+    )
+    
+const [rows] = await db.query(
+  `INSERT INTO movies
+  (title, director, musician, runtime, release_date, rating, \`cast\`, genres,
+   poster_url, thumbnail_url, trailer_id, stream_platform, stream_url)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  [
+    request.title,
+    request.director,
+    request.musician,
+    request.runtime,
+    request.releaseDate,
+    request.ageRating,
+    JSON.stringify(request.cast),
+    JSON.stringify(request.selectedGenres),
+    request.posterUrl,
+    request.thumbnailUrl,
+    request.trailerId,
+    request.ottPlatform,
+    request.streamUrl
+  ]
+);
 const query = `INSERT INTO users(first_name, last_name, username, email, pass_hash, dob, role)\n
         \nVALUES ("${request.firstname}","${request.lastname}","${request.username}",\n
         "${request.email}",\n
@@ -21,7 +41,7 @@ const query = `INSERT INTO users(first_name, last_name, username, email, pass_ha
     status: 200,
     request: request,
     query: query,
-    rows: mode == "sql" ? rows : null,
+    rows: rows
   };
 
   return NextResponse.json(data);

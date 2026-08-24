@@ -1,7 +1,8 @@
 "use client"
 
-import { redirect } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import Image from "next/image"
+import { CheckIcon } from "lucide-react";
 
 export default function Page() {
 
@@ -10,37 +11,115 @@ export default function Page() {
     const [musician, setMusician] = useState("")
     const [runtime, setRuntime] = useState("")
     const [releaseDate, setReleaseDate] = useState("")
-    const [ageRating, setAgeRating] = useState("")
-    const [genres, setGenres] = useState("")
-    const [cast, setCast] = useState("")
+    const [ageRating, setAgeRating] = useState("UA")
+    const [cast, setCast] = useState([])
+    const [actor, setActor] = useState("")
     const [posterUrl, setPosterUrl] = useState("")
     const [thumbnailUrl, setThumbnailUrl] = useState("")
     const [trailerId, setTrailerId] = useState("")
-    const [streamPlatform, setStreamPlatform] = useState("")
     const [streamUrl, setStreamUrl] = useState("")
-    //   const [ageRating, setConfirmPassword] = useState("")
-    //   const [ageRating, setConfirmPassword] = useState("")
-
-    //   const [dob, setDob] = useState("2009-07-02")
-    //   const [role, setRole] = useState("user")
+    const [previewPoster, setPreviewPoster] = useState("")
+    const [ottPlatform, setOttPlatform] = useState("")
+    const [selectedGenres, setSelectedGenres] = useState([]);
     const [loading, setLoading] = useState(false)
     const [data, setData] = useState<any>({})
     const [query, setQuery] = useState("")
     const [error, setError] = useState("")
 
-    useEffect(() => {
-        // console.log(email, name, password)
-    })
+    const PLATFORMS = [
+        "Netflix",
+        "Amazon Prime Video",
+        "Disney+",
+        "Hulu",
+        "HBO Max",
+        "Apple TV+",
+        "Paramount+",
+        "Peacock",
+        "SonyLIV",
+        "JioHotstar",
+        "ZEE5",
+        "MX Player",
+        "Hoichoi",
+        "Sun NXT",
+        "Aha",
+        "YouTube",
+    ] as const;
+
+    const GENRES_OPTIONS = [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Crime",
+        "Documentary",
+        "Drama",
+        "Family",
+        "Fantasy",
+        "Horror",
+        "Mystery",
+        "Romance",
+        "SciFi",
+        "Thriller",
+        "War",
+        "Western",
+        "Musical",
+        "Biography",
+        "History",
+        "Sport",
+        "Superhero",
+        "Psychological",
+        "Suspense",
+        "Political",
+        "Teen",
+        "ComingOfAge",
+        "DarkComedy",
+        "RomanticComedy",
+        "RomanticDrama",
+        "ActionComedy",
+        "ActionThriller",
+        "SciFiThriller",
+        "MysteryThriller",
+        "HistoricalDrama",
+        "WarDrama",
+        "LegalDrama",
+        "MedicalDrama",
+        "Disaster",
+        "MartialArts",
+        "Noir",
+        "Satire",
+    ] as const;
+
+    const toggleGenre = (genre): void => {
+        setSelectedGenres((prev) =>
+            prev.includes(genre) ? prev.filter((item) => item !== genre) : [...prev, genre],
+        );
+    };
+
+
+    const toggleCast = () => {
+        setCast((prev) => [...prev, actor])
+        setActor("")
+        console.log(cast)
+    }
+
+    const minusToggleCast = (item) => {
+        setCast((prev) => prev.filter((i) => i != item))
+    }
+
+    const handleOttPlatformChange = (e: ChangeEvent<HTMLSelectElement>): void => {
+        setOttPlatform(e.target.value)
+    }
+
+
+    const previewwPoster = () => {
+        setPreviewPoster(posterUrl)
+    }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        // if (password !== confirmPassword) { setError("Passwords no not match!"); return; }
-        // if (!(username)) generateUsername();
-
         setLoading(true)
         try {
-            const response = await fetch(`/api/createUser`, {
+            const response = await fetch(`/api/admin/add-movie`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -53,11 +132,11 @@ export default function Page() {
                     releaseDate,
                     ageRating,
                     cast,
-                    genres,
+                    selectedGenres,
                     posterUrl,
                     thumbnailUrl,
                     trailerId,
-                    streamPlatform,
+                    ottPlatform,
                     streamUrl,
                 })
 
@@ -66,27 +145,17 @@ export default function Page() {
                 console.log("Error Submitting User Data", response)
             }
             const apiData = await response.json()
-            console.log("hash:", apiData.hashedPassword)
-            const newData = apiData.request
-            console.log("data by api:", JSON.stringify(newData))
-            setData(newData)
-            console.log("data by state:", data)
             setQuery(apiData.query)
-            console.log(query)
+            console.log(apiData)
             console.log(apiData.rows)
         }
         catch (error) {
-            // throw new Error(error.message)
+            console.error("Error: ", error)
         }
         finally {
             setLoading(false)
-            setTimeout(() => redirect('/login'), 9000)
         }
     }
-
-    // const generateUsername = () => {
-    //     setUsername(firstname + lastname + "@" + Math.ceil(Math.random() * 1000))
-    // }
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-100">
@@ -139,7 +208,7 @@ export default function Page() {
                         />
                     </div>
 
-                      <div>
+                    <div>
                         <label className="mb-1 block text-sm font-medium text-gray-700">
                             Musician
                         </label>
@@ -153,7 +222,31 @@ export default function Page() {
                         />
                     </div>
 
-                      <div>
+                    <div>
+                        <label
+                            htmlFor="platform"
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                            OTT Platform
+                        </label>
+                        <select
+                            id="platform"
+                            value={ottPlatform}
+                            onChange={handleOttPlatformChange}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#665bca] focus:border-[#665bca] outline-none transition-all bg-white"
+                        >
+                            {PLATFORMS.map((ott) => (
+                                <option key={ott} value={ott}>
+                                    {ott}
+                                </option>
+                            ))}
+                        </select>
+                        <p className="mt-1 text-xs text-gray-500">
+                            Select the movie platform.
+                        </p>
+                    </div>
+
+                    <div>
                         <label className="mb-1 block text-sm font-medium text-gray-700">
                             Runtime
                         </label>
@@ -167,9 +260,9 @@ export default function Page() {
                         />
                     </div>
 
-                      <div>
+                    <div>
                         <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Poster Url 
+                            Poster Url
                         </label>
                         <input
                             type="text"
@@ -181,9 +274,41 @@ export default function Page() {
                         />
                     </div>
 
-                      <div>
+                    {previewPoster && <Image src={previewPoster} height={1980} width={1080} alt="pstImage" />}
+
+                    {posterUrl &&
+                        <button type="button" onClick={() => previewwPoster()} className="bg-green-200 py-2 px-4 mx-auto rounded-md">Preview Poster</button>
+                    }
+
+                    <div>
                         <label className="mb-1 block text-sm font-medium text-gray-700">
-                            Thumnail Url
+                            Actor Name
+                        </label>
+                        <div className="flex">
+                            <input
+                                type="text"
+                                placeholder="Enter Actor"
+                                className="w-9/12 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
+                                onChange={(e) => setActor(e.target.value)}
+                                value={actor}
+                                required
+                            />
+                            <button type="button" onClick={() => toggleCast()} className="bg-green-200 py-2 px-4 mx-auto rounded-md">Add</button>
+                        </div>
+                        <div className="mt-3">
+                            {cast && cast.map((item) => (
+                                <div key={item} onClick={() => minusToggleCast(item)} className="bg-[#e6cefa] py-[8px] px-[16px] border-[#ddd] rounded-2xl mr-[5px] cursor-pointer inline-flex items-center gap-[6px] ">
+                                    {item}
+                                </div>
+                            ))}
+                        </div>
+
+
+                    </div>
+
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            Thumbnail Url
                         </label>
                         <input
                             type="text"
@@ -194,7 +319,35 @@ export default function Page() {
                             required
                         />
                     </div>
-                  
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Tags
+                        </label>
+                        <div className="flex flex-row flex-wrap content-center items-center gap-1 text-sm">
+                            {GENRES_OPTIONS.map((genre) => (
+                                <button
+                                    key={genre}
+                                    onClick={() => toggleGenre(genre)}
+                                    type="button"
+                                    className={`
+                      py-[8px] px-[16px] border-[#ddd] rounded-[20px] cursor-pointer inline-flex items-center gap-[6px] 
+                      ${selectedGenres.includes(genre)
+                                            ? "bg-[#7b34ff] border-[#4caf50] text-[#ffffff]"
+                                            : "bg-[#e6cefa]"
+                                        }
+                    `}
+                                >
+                                    {selectedGenres.includes(genre) && (
+                                        <CheckIcon className="w-4 h-4" />
+                                    )}
+                                    {genre}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+
                     <div>
                         <label className="mb-1 block text-sm font-medium text-gray-700">
                             Trailer Id
@@ -241,9 +394,9 @@ export default function Page() {
                             Age Rating
                         </label>
                         <span className="border-2 border-black py-[12px] bg-black rounded-xl">
-                            <button type="button" onClick={() => setAgeRating("U")} className={`${ageRating == "U" ? " bg-blue-600 " : "text-blue-600 bg-black"} py-2 px-4 rounded-xl font-bold text-lg`}>User</button>
-                            <button type="button" onClick={() => setAgeRating("UA")} className={`${ageRating == "UA" ? " bg-blue-600 " : "text-blue-600 bg-black"} py-2 px-4 rounded-xl font-bold text-lg`}>User</button>
-                            <button type="button" onClick={() => setAgeRating("A")} className={`${ageRating == "A" ? " bg-blue-600 " : "text-blue-600 bg-black"} py-2 px-4 rounded-xl font-bold text-lg`}>User</button>
+                            <button type="button" onClick={() => setAgeRating("U")} className={`${ageRating == "U" ? " bg-blue-600 " : "text-blue-600 bg-black"} py-2 px-4 rounded-xl font-bold text-lg`}>U</button>
+                            <button type="button" onClick={() => setAgeRating("UA")} className={`${ageRating == "UA" ? " bg-blue-600 " : "text-blue-600 bg-black"} py-2 px-4 rounded-xl font-bold text-lg`}>UA</button>
+                            <button type="button" onClick={() => setAgeRating("A")} className={`${ageRating == "A" ? " bg-blue-600 " : "text-blue-600 bg-black"} py-2 px-4 rounded-xl font-bold text-lg`}>A</button>
                         </span>
                     </div>
                     <button
@@ -253,12 +406,6 @@ export default function Page() {
                         Register
                     </button>
                 </form>
-
-                <p className="mt-4 text-center text-sm text-gray-600">
-                    Already have an account?{" "}
-                    <a href="/login" className="text-blue-600 hover:underline">
-                        Login          </a>
-                </p>
             </div>
         </div>
     );

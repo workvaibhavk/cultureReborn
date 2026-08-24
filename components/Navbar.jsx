@@ -1,10 +1,25 @@
 import { Clock, MenuIcon, XIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link" 
+import Link from "next/link"
 import "./Navbar.css";
+import useUser from "../lib/useUser";
 
 const Navbar = () => {
+
+  const { userData, isLoaded } = useUser();
+
+  if (!isLoaded) return <p> Loading ....</p>;
+
+  if (isLoaded) {
+    if (!userData) console.warn("failed to get user!")
+  }
+  console.log(userData, isLoaded)
+
+  const firstName = userData?.rows?.first_name
+  const lastName = userData?.rows?.last_name
+
+
   const [isopen, setIsopen] = useState(false);
 
   return (
@@ -62,7 +77,7 @@ const Navbar = () => {
         </Link>
       </div>
 
-      <Link className="loginbtn" href="/authenticate">Join</Link>
+     {userData ? <p> <Link href="/userarea" className=" text-2xl rounded-full bg-gray-600  p-7 size-8 mx-auto flex items-center justify-center ">{firstName.charAt(0) + lastName.charAt(0)}</Link> </p> : <Link className="loginbtn" href="/authenticate">Join</Link>}
 
       {/* <MenuIcon className="menuIc" onClick={() => setIsopen(!isopen)} /> */}
     </div>
