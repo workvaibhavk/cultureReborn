@@ -64,7 +64,7 @@ if (!(username)) generateUsername();
     }
     finally {
       setLoading(false)
-      setTimeout(()=> redirect('/login'), 9000)
+      // setTimeout(()=> redirect('/login'), 9000)
     }
   }
 

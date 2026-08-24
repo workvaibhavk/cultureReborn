@@ -12,6 +12,20 @@ export default function Login() {
   const [query, setQuery] = useState("")
   const [error,setError] = useState("")
 
+    const [value, setValue] = useState("");
+
+ useEffect(() => {
+    const storedValue = sessionStorage.getItem("myKey");
+    if (storedValue) {
+      setValue(storedValue);
+    }
+  }, []);
+
+  const saveValue = () => {
+    sessionStorage.setItem("User", "Hello Next.js!");
+    setValue("Hello Next.js!");
+  };
+
   useEffect(() => {
     // console.log(email, name, password)
   })
@@ -36,9 +50,12 @@ export default function Login() {
         console.log("Error Submitting User Data", response)
       }
       const apiData = await response.json()
+      console.log("rows", apiData.rows)
+      console.log("hashBool", apiData.hashBool)
+      console.log("pass", apiData.pass.pass_hash)
       console.log("hash:", apiData.hashedPassword)
       const newData = apiData.request
-      console.log("data by api:", JSON.stringify(newData))
+      console.log("data by api:", newData)
       setData(newData)
       console.log("data by state:", data)
       setQuery(apiData.query)
@@ -49,7 +66,7 @@ export default function Login() {
     }
     finally {
       setLoading(false)
-      setTimeout(()=> redirect('/'), 9000)
+      // setTimeout(()=> redirect('/'), 9000)
     }
   }
 

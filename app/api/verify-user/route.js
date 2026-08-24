@@ -8,18 +8,30 @@ export async function POST(req) {
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(request.password, saltRounds)
-    if (mode == "sql") {
-        const [rows] = db.query("SELECT user_id FROM users WHERE ((username = ? || email = ?) && pass_hash = ?)", [request.firstname, request.lastname, request.username, request.email, hashedPassword, request.dob, request.role])
-        sessionStorage.setItem('userId', user_id)
-    }
 
+    const [[pass]] = await db.query("SELECT pass_hash FROM users WHERE (email = ? OR username = ?)",[request.emailUsername, request.emailUsername])
+
+    if(!(pass)) return NextResponse.json({
+        status: 500,
+        error: "Username or Email Invalid"
+    })
+
+    if(!bcrypt.compare(request.password, pass.pass_hash)) return NextResponse.json({
+        status: 500,
+        error: "Password Doesn't Match"
+    })
+
+    const [[rows]] = await db.query("SELECT user_id FROM users WHERE (username = ? OR email = ?)", [request.emailUsername, request.emailUsername])
+    
     const query = `SELECT user_id FROM users WHERE ((username = ${request.emailUsername} || email = ${request.emailUsername}) && pass_hash = ${hashedPassword});`
 
     const data = {
         status: 200,
         request: request,
         query: query,
-        rows: mode == "sql" ? mode : null
+        rows: rows,
+        // hashBool: bcrypt.compare(request.password, user.pass_hash) ? "yess" : "no"
+        pass: pass
     };
 
     return NextResponse.json(data);

@@ -8,9 +8,8 @@ export async function POST(req) {
 
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(request.password, saltRounds)
-if (mode == "sql"){
       const [rows] = await db.query("INSERT INTO users(first_name, last_name, username, email, pass_hash, dob, role) VALUES (?,?,?,?,?,?,?)",[request.firstname, request.lastname, request.username, request.email, hashedPassword, request.dob, request.role])
-}
+
 const query = `INSERT INTO users(first_name, last_name, username, email, pass_hash, dob, role)\n
         \nVALUES ("${request.firstname}","${request.lastname}","${request.username}",\n
         "${request.email}",\n
