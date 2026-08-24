@@ -12,7 +12,7 @@ export async function POST(req) {
     
 const [rows] = await db.query(
   `INSERT INTO movies
-  (title, director, musician, runtime, release_date, rating, \`cast\`, genres,
+  (title, director, musician, runtime, release_date, certification, \`cast\`, genres,
    poster_url, thumbnail_url, trailer_id, stream_platform, stream_url)
   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   [
@@ -31,11 +31,7 @@ const [rows] = await db.query(
     request.streamUrl
   ]
 );
-const query = `INSERT INTO users(first_name, last_name, username, email, pass_hash, dob, role)\n
-        \nVALUES ("${request.firstname}","${request.lastname}","${request.username}",\n
-        "${request.email}",\n
-        "${hashedPassword}",\n
-        "${request.dob}","${request.role}");`
+const query = ``
 
   const data = {
     status: 200,
