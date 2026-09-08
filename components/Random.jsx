@@ -1,88 +1,19 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import VanillaTilt from "vanilla-tilt";
-import { Bookmark, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { useRouter } from "next/navigation";
 import "swiper/css";
 import "swiper/css/navigation";
-import {moviesSampleData as movies} from '@/lib/data'
+import { moviesSampleData as movies } from "@/lib/data";
 
 const Random = () => {
-
-  const RatingCircle = ({ rating }) => {
-    const [showTooltip, setShowTooltip] = useState(false);
-    const [touchTimeout, setTouchTimeout] = useState(null);
-    const [progress, setProgress] = useState(0);
-  
-    const getProgressColor = (percent) => {
-      if (percent <= 10) return "#FF3B30";
-      if (percent <= 25) return "#FF6B35"; 
-      if (percent <= 40) return "#FF8E00"; 
-      if (percent <= 55) return "#FFB800"; 
-      if (percent <= 70) return "#FFD700"; 
-      if (percent <= 85) return "#9ACD32"; 
-      return "#34C759"; 
-    };
-
-    const handleTouchStart = () => {
-      const timeout = setTimeout(() => {
-        setShowTooltip(true);
-      }, 800);
-      setTouchTimeout(timeout);
-    };
-
-    const handleTouchEnd = () => {
-      if (touchTimeout) {
-        clearTimeout(touchTimeout);
-        setTouchTimeout(null);
-      }
-      setTimeout(() => setShowTooltip(false), 2000);
-    };
-
-    return (
-      <div className="absolute bottom-[-21px] right-[-21px] z-20">
-        <svg
-          className="absolute inset-0 w-full h-full -rotate-90"
-          viewBox="0 0 42 42"
-        >
-          <circle
-            cx="21"
-            cy="21"
-            r="18"
-            fill="none"
-            stroke="rgba(255,255,255,0.2)"
-            strokeWidth="2"
-          />
-        </svg>
-
-        <svg
-          className="absolute inset-0 w-full h-full -rotate-90"
-          viewBox="0 0 42 42"
-        ></svg>
-
-        <div
-          className="absolute inset-[2px] rounded-full flex items-center justify-center"
-          style={{ backgroundColor: "#120F0F" }}
-        >
-          <span className="text-white text-[12px] font-medium"></span>
-        </div>
-
-        <div className="text-center">
-          <span
-            className="text-[11px] font-medium whitespace-nowrap"
-            style={{ color: "#B3B3B3" }}
-          ></span>
-        </div>
-      </div>
-    );
-  };
-
   const router = useRouter();
   const swiperRef = useRef(null);
 
@@ -96,18 +27,6 @@ const Random = () => {
 
     setIsStart(swiper.isBeginning);
     setIsEnd(swiper.isEnd);
-  };
-
-  const handlePrevClick = () => {
-    if (swiperRef.current && swiperRef.current.swiper) {
-      swiperRef.current.swiper.slidePrev();
-    }
-  };
-
-  const handleNextClick = () => {
-    if (swiperRef.current && swiperRef.current.swiper) {
-      swiperRef.current.swiper.slideNext();
-    }
   };
 
   const TiltCard = ({ children }) => {
@@ -141,13 +60,16 @@ const Random = () => {
 
   return (
     <div className="bg-none text-white w-full">
-      <h1 className="Title-txt opacity-50 p-50 text-7xl md:text-[240px] justify-self-center tracking-[2px] font-[100]">
+      <h1 className="Title-txt opacity-50 p-50 text-7xl md:text-[240px] justify-self-center tracking-[2px] font-thin">
         Trending
       </h1>
 
-      <div style={{"margin": "auto",}} className="main-swiper-cnt px-6 relative w-10/12 mx-auto flex items-center justify-center" >
+      <div
+        style={{ margin: "auto" }}
+        className="main-swiper-cnt px-6 relative w-10/12 mx-auto flex items-center justify-center"
+      >
         <button
-          className={`custom-prev transition-opacity duration-300 absolute top-1/2 left-0 z-10 transform -translate-y-1/2 bg-white text-black rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:scale-105 transition cursor-pointer ${
+          className={`custom-prev transition duration-300 absolute top-1/2 left-0 z-10 transform -translate-y-1/2 bg-white text-black rounded-full w-10 h-10 flex items-center justify-center shadow-md hover:scale-105 cursor-pointer ${
             isStart ? "opacity-0 pointer-events-none" : "opacity-100"
           }`}
         >
@@ -189,26 +111,23 @@ const Random = () => {
           slidesPerView={6}
           slidesPerGroup={6}
           loop={false}
-          className="overflow-hidden mt-[-80px] px-6"
+          className="overflow-hidden -mt-20 px-6"
         >
           {movies.map((movie) => (
-            <SwiperSlide key={movie.id} className="flex-shrink-0 !w-auto  ">
-              <div className="flex flex-col items-center space-y-2 movie-tilt-wrapper relative w-[170px] h-[280px] overflow-visible rounded-2xl">
+            <SwiperSlide key={movie.movie_id} className="shrink-0 w-auto!  ">
+              <div className="flex flex-col items-center space-y-2 movie-tilt-wrapper relative w-42 h-70 overflow-visible rounded-2xl">
                 <TiltCard>
                   <div
                     onClick={() => {
-                      router.push(`/movie/${movie.id}`);
+                      router.push(`/movie/${movie.movie_id}`);
                     }}
-                    className="w-[170px] h-[255px] rounded-xl overflow-hidden cursor-pointer relative"
+                    className="w-42 h-64 rounded-xl overflow-hidden cursor-pointer relative"
                   >
                     <img
                       src={movie.poster_url}
-                      // onError={(e) => (e.target.src = "/image.jpg")}
                       alt={movie.title}
                       className="w-full h-full object-cover"
                     />
-
-                    <RatingCircle rating={movie.rating} />
                   </div>
                 </TiltCard>
                 <h3 className="movie_title text-white text-sm font-medium">
