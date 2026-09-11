@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import { useRouter } from "next/navigation";
-// import { moviesSampleData as movies } from "@/lib/data";
+import { moviesSampleData as movies } from "@/lib/data";
 import { Chela_One } from "next/font/google";
 import useUser from "@/lib/useUser";
 
@@ -15,7 +15,6 @@ const chelaOne = Chela_One({
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
-  const [movies, setMovies] = useState([]);
 
   const { userData, isLoaded } = useUser();
 
@@ -26,18 +25,17 @@ export default function Page() {
   }
   console.log(userData, isLoaded);
 
-  const getMovies = async () => {
+  const handleSubmit = async () => {
     try {
       setLoading(true);
       const response = await fetch("/api/get-movies");
 
       if (!response.ok) {
-        console.log("Error fetching movies from db", response);
+        console.error("Error fetching movies from db", response);
       }
 
       const data = await response.json();
-      console.log("DATA", data);
-      setMovies(data.rows);
+      console.log(data);
     } catch (err) {
       console.log("Error: ", err);
     } finally {
@@ -45,8 +43,20 @@ export default function Page() {
     }
   };
 
+  const getMovies = () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/get-movies");
+      if (!response.ok) {
+        console.error("Error fetching movies from db", response);
+      }
+    } catch (err) {
+    } finally {
+    }
+  };
+
   useEffect(() => {
-    getMovies();
+    handleSubmit();
   }, []);
 
   const router = useRouter();

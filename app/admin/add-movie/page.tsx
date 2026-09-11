@@ -344,7 +344,7 @@ export default function Page() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tags
+              Tags 
             </label>
             <div className="flex flex-row flex-wrap content-center items-center gap-1 text-sm">
               {GENRES_OPTIONS.map((genre) => (
