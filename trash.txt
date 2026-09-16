@@ -759,3 +759,9 @@ const movies = [
     language: "Hindi",
   },
 ];
+
+
+
+mysql -h autorack.proxy.rlwy.net -P 39781 -u root -pleBbxxHamPhdPEaSdcNfDTYWIHJvgxCs railway
+
+DATABASE_URL=mysql://root:leBbxxHamPhdPEaSdcNfDTYWIHJvgxCs@autorack.proxy.rlwy.net:39781/railway

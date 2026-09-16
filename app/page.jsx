@@ -33,9 +33,9 @@ export default function Page() {
       {isVisible && <Starter />}
       <Navbar />
       <Anime />
-      <Footer />
       <Random />
       <FilteredByGenres />
+      <Footer />
 
     </div>
   );
